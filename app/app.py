@@ -204,6 +204,15 @@ def snippet(text: str, start: int, end: int) -> str:
     s = max(0, start - 60)
     e = min(len(text), end + 60)
     return text[s:e].replace("\n", "\\n")
+def extract_line_of_match(code: str, start: int) -> str:
+    lines = code.split("\n")
+    pos = 0
+    for ln, text in enumerate(lines):
+        next_pos = pos + len(text) + 1
+        if pos <= start < next_pos:
+            return text.strip()
+        pos = next_pos
+    return ""
 
 def pack_issue(unit: Unit, issue_type, message, severity, start, end, suggestion, meta=None):
     src = unit.code or ""
@@ -220,7 +229,8 @@ def pack_issue(unit: Unit, issue_type, message, severity, start, end, suggestion
         "line": line_of_offset(src, start),
         "message": message,
         "suggestion": suggestion or "",
-        "snippet": snippet(src, start, end),
+        "snippet": extract_line_of_match(src, start),
+        # "snippet": snippet(src, start, end),
         "meta": meta or {}
     }
 
