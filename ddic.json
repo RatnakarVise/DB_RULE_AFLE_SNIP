@@ -1,0 +1,22 @@
+{
+  "data_elements": {
+    "/SCMTMS/RES_MAXC": {
+      "len": "15",
+      "dec": "3"
+    }
+  },
+  "table_fields": {
+    "BSEG-DMBTR": {
+      "len": "23",
+      "dec": "2"
+    },
+     "RTAX1U15-WMWST": {
+      "len": "23",
+      "dec": "2"
+    },
+     "RTAX1U15-MSATZ": {
+      "len": "23",
+      "dec": "2"
+    }
+  }  
+}
