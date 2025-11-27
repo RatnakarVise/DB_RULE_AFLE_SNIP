@@ -1,0 +1,12 @@
+[
+  {
+    "pgm_name": "ZAFLE_TEST",
+    "inc_name": "ZAFLE_TEST",
+    "type": "PROG",
+    "name": "MAIN",
+    "class_implementation": "",
+    "start_line": 100,
+    "end_line": 260,
+    "code": "DATA: lv_amt TYPE p LENGTH 10 DECIMALS 2.\nDATA lv_text TYPE c LENGTH 10.\nDATA lv_final TYPE c LENGTH 12.\n\nlv_amt = '123456789'.\nMOVE lv_amt TO lv_text.\nCONCATENATE lv_amt lv_text INTO lv_final.\n\nIF lv_amt > '2000000'.\n  WRITE 'Big Amount'.\nENDIF.\n\nWRITE lv_final TO lv_text.\n"
+  }
+]

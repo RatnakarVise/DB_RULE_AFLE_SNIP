@@ -213,27 +213,41 @@ def extract_line_of_match(code: str, start: int) -> str:
             return text.strip()
         pos = next_pos
     return ""
+def statement_span_at(src: str, pos: int):
+    prev = src.rfind('.', 0, pos)
+    start = 0 if prev < 0 else prev + 1
+    nxt = src.find('.', pos)
+    end = len(src) if nxt < 0 else nxt + 1
+    return start, end
 
-def pack_issue(unit: Unit, issue_type, message, severity, start, end, suggestion, meta=None):
+def extract_full_snippet(src: str, start: int, end: int) -> str:
+    return src[start:end].strip().replace("\n", "\\n")
+
+def pack_issue(unit, issue_type, message, severity, start, end, suggestion, meta=None):
     src = unit.code or ""
+
+    stmt_start, stmt_end = statement_span_at(src, start)
+    snippet_txt = extract_full_snippet(src, stmt_start, stmt_end)
+
+    start_line = unit.start_line + line_of_offset(src, stmt_start) - 1
+    end_line   = unit.start_line + line_of_offset(src, stmt_end) - 1
+
     return {
         "pgm_name": unit.pgm_name,
         "inc_name": unit.inc_name,
         "type": unit.type,
         "name": unit.name,
         "class_implementation": unit.class_implementation,
-        "start_line": unit.start_line,
-        "end_line": unit.end_line,
+        "start_line": start_line,
+        "end_line": end_line,
         "issue_type": issue_type,
         "severity": severity,
-        "line": line_of_offset(src, start),
+        "line": start_line,
         "message": message,
         "suggestion": suggestion or "",
-        "snippet": extract_line_of_match(src, start),
-        # "snippet": snippet(src, start, end),
+        "snippet": snippet_txt,
         "meta": meta or {}
     }
-
 def pack_decl_issue(
     decl_unit: Unit,
     decl_line: int,
@@ -244,23 +258,25 @@ def pack_decl_issue(
     suggestion: str,
     meta=None
 ):
+    base = decl_unit.start_line if decl_unit.start_line and decl_unit.start_line > 0 else 1
+    starting_line_abs = base + decl_line - 1
+
     return {
         "pgm_name": decl_unit.pgm_name,
         "inc_name": decl_unit.inc_name,
         "type": decl_unit.type,
         "name": decl_unit.name,
         "class_implementation": decl_unit.class_implementation,
-        "start_line": decl_unit.start_line,
-        "end_line": decl_unit.end_line,
+        "start_line": starting_line_abs,
+        "end_line": starting_line_abs,
         "issue_type": issue_type,
-        "severity": severity,
-        "line": decl_line,
+        "severity": severity or "error",
+        "line": starting_line_abs,
         "message": message,
         "suggestion": suggestion or "",
         "snippet": decl_text,
         "meta": meta or {}
     }
-
 # -------- Symbol table & DDIC --------
 STRUCT_INCLUDE_MAP: Dict[str, str] = {}
 
