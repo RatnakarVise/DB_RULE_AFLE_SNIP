@@ -1027,7 +1027,7 @@ def build_response(unit: Unit, issues: List[Dict[str, Any]]) -> Dict[str, Any]:
             "starting_line": line,
             "ending_line": line,
             "issues_type": issues_type,
-            "severity": i.get("severity"),
+            "severity": "error",
             "message": i.get("message"),
             "suggestion": i.get("suggestion"),
             "snippet": i.get("snippet"),
